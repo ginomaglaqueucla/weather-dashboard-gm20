@@ -59,7 +59,8 @@ var getWeather = function(searchTerm) {
                 console.log(response);
                 response.json().then(function(data) {
                 console.log(data);
-                displayWeather(data, searchTerm);
+                var UVIndex = getUVIndex(data);
+                displayWeather(data, UVIndex, searchTerm);
                 });
             // error handling
             } 
@@ -77,29 +78,20 @@ var displayWeather = function (weatherData, city) {
     var weatherTemp = weatherData.main.temp;
     var weatherHumidity = weatherData.main.humidity;
     var weatherWind = weatherData.wind.speed;
-    var cityLatLong = [weatherData.coord.lat, weatherData.coord.lon];
-    var weatherUV = getUVIndex(cityLatLong);
-    console.log(weatherIcon);
-    console.log(weatherTemp);
-    console.log(weatherHumidity);
-    console.log(weatherWind);
-    console.log(cityLatLong);
-    console.log(weatherUV);
-
+  
     var headerString = city + "  (" + currentDay + ")";
     cityH1El.textContent = headerString;
     tempPEl.textContent = weatherTemp;
     humidPEl.textContent = weatherHumidity;
     windSpeedPEl.textContent = weatherWind;
-    uvIndexPEl.textContent = weatherUV;
 
 }
 
 // fetches UV index and returns
-var getUVIndex = function(cityLatLong) {
+var getUVIndex = function(weatherData) {
     //http://api.openweathermap.org/data/2.5/uvi?appid={appid}&lat={lat}&lon={lon}
-    var latString = "&lat="+ cityLatLong[0];
-    var longString = "&lon="+ cityLatLong[1];
+    var latString = "&lat="+ weatherData.coord.lon;
+    var longString = "&lon="+ weatherData.coord.lat;
     var apiURL = apiQueryUV + apiKey + latString + longString;
     fetch(apiURL)
     .then(function(response){
@@ -108,7 +100,7 @@ var getUVIndex = function(cityLatLong) {
             console.log(response);
             response.json().then(function(data) {
             console.log(data.value);
-            return data.value;
+            uvIndexPEl.textContent = data.value;
             });
         // error handling
         } 
