@@ -1,10 +1,13 @@
 var userFormEl = document.querySelector("#user-form");
 var searchTermEl = document.querySelector("#search-term");
+var cityH1El = document.querySelector("#city");
+var currentDay = moment().format("L");
 
 // array of previous cities entered
 var cityHistory = [];
 var apiKey = "&appid=dda7c53451e44b1f7532fa3d4d41f760";
-var apiQueryPre = "https://api.openweathermap.org/data/2.5/weather?q=";
+var apiQueryWeather = "https://api.openweathermap.org/data/2.5/weather?q=";
+var apiQueryUV = "https://api.openweathermap.org/data/2.5/uvi?";
 var weatherUnit = "&units=imperial"
 
 var loadCityHistory = function() {
@@ -38,7 +41,7 @@ var formSubmitHandler = function(event) {
 
 var getWeather = function(searchTerm) {
     // format api url
-    var apiURL = apiQueryPre + searchTerm + weatherUnit + apiKey;
+    var apiURL = apiQueryWeather + searchTerm + weatherUnit + apiKey;
     console.log(apiURL);
 
     // make a get request to url
@@ -48,7 +51,7 @@ var getWeather = function(searchTerm) {
             if (response.ok) {
                 console.log(response);
                 response.json().then(function(data) {
-                console.log(data.main.temp);
+                console.log(data);
                 displayWeather(data, searchTerm);
                 });
             // error handling
@@ -59,7 +62,52 @@ var getWeather = function(searchTerm) {
     })
         .catch(function(error) {
         alert("Unable to connect to Open Weather");
-        });
+    });
+}
+
+var displayWeather = function (weatherData, city) {
+    var weatherIcon = weatherData.weather.icon;
+    var weatherTemp = weatherData.main.temp;
+    var weatherHumidity = weatherData.main.humidity;
+    var weatherWind = weatherData.wind.speed;
+    var cityLatLong = [weatherData.coord.lat, weatherData.coord.lon];
+    var weatherUV = getUVIndex(cityLatLong);
+    console.log(weatherIcon);
+    console.log(weatherTemp);
+    console.log(weatherHumidity);
+    console.log(weatherWind);
+    console.log(cityLatLong);
+    console.log(weatherUV);
+
+    var headerString = city + "  (" + currentDay + ")";
+    cityH1El.textContent = headerString;
+}
+
+// fetches UV index and returns
+var getUVIndex = function(cityLatLong) {
+    //http://api.openweathermap.org/data/2.5/uvi?appid={appid}&lat={lat}&lon={lon}
+    var latString = "&lat="+ cityLatLong[0];
+    var longString = "&lon="+ cityLatLong[1];
+    var apiURL = apiQueryUV + apiKey + latString + longString;
+    fetch(apiURL)
+    .then(function(response){
+        // request was successful
+        if (response.ok) {
+            console.log(response);
+            response.json().then(function(data) {
+            console.log(data.value);
+            return data.value;
+            });
+        // error handling
+        } 
+        else {
+            alert("Error: " + response.statusText);
+        }
+    })
+    .catch(function(error) {
+    alert("Unable to connect to Open Weather");
+    });
+    
 }
 
 
