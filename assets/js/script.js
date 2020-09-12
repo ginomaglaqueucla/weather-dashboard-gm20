@@ -86,9 +86,9 @@ var displayWeather = function (weatherData, city) {
 
     cityH1El.text(headerString);
     iconImgEl.attr("src", weatherIcon);
-    tempPEl.text(weatherTemp);
-    humidPEl.text(weatherHumidity);
-    windSpeedPEl.text(weatherWind);
+    tempPEl.text("Temperature: "+weatherTemp +"°F");
+    humidPEl.text("Humidity: " +weatherHumidity +"%");
+    windSpeedPEl.text("Wind Speed: "+ weatherWind +"MPH");
 
 }
 
@@ -104,7 +104,7 @@ var getUVIndex = function(weatherData) {
         if (response.ok) {
             // console.log(response);
             response.json().then(function(data) {
-            uvIndexPEl.textContent = data.value;
+            uvIndexPEl.text("UV Index: " + data.value);
             });
         // error handling
         } 
@@ -119,7 +119,7 @@ var getUVIndex = function(weatherData) {
 
 var getIcon = function(iconID) {
     var urlPrefix = " http://openweathermap.org/img/wn/";
-    var urlSuffix = "@2x.png";
+    var urlSuffix = ".png";
     var url = urlPrefix + iconID + urlSuffix;
     return url;
 }
