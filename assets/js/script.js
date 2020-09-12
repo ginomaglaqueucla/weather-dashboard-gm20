@@ -1,6 +1,13 @@
 var userFormEl = document.querySelector("#user-form");
 var searchTermEl = document.querySelector("#search-term");
+
 var cityH1El = document.querySelector("#city");
+var tempPEl = document.querySelector("#temp");
+var humidPEl = document.querySelector("#humid");
+var windSpeedPEl = document.querySelector("#wind-speed");
+var uvIndexPEl = document.querySelector("#uv");
+
+
 var currentDay = moment().format("L");
 
 // array of previous cities entered
@@ -81,6 +88,11 @@ var displayWeather = function (weatherData, city) {
 
     var headerString = city + "  (" + currentDay + ")";
     cityH1El.textContent = headerString;
+    tempPEl.textContent = weatherTemp;
+    humidPEl.textContent = weatherHumidity;
+    windSpeedPEl.textContent = weatherWind;
+    uvIndexPEl.textContent = weatherUV;
+
 }
 
 // fetches UV index and returns
