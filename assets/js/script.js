@@ -1,11 +1,12 @@
-var userFormEl = document.querySelector("#user-form");
-var searchTermEl = document.querySelector("#search-term");
+var userFormEl = $("#user-form");
+var searchTermEl = $("#search-term");
 
-var cityH1El = document.querySelector("#city");
-var tempPEl = document.querySelector("#temp");
-var humidPEl = document.querySelector("#humid");
-var windSpeedPEl = document.querySelector("#wind-speed");
-var uvIndexPEl = document.querySelector("#uv");
+var cityH1El = $("#city");
+var iconImgEl = $("#weather-icon")
+var tempPEl = $("#temp");
+var humidPEl = $("#humid");
+var windSpeedPEl = $("#wind-speed");
+var uvIndexPEl = $("#uv");
 
 
 var currentDay = moment().format("L");
@@ -36,10 +37,10 @@ var formSubmitHandler = function(event) {
     console.log("hello");
 
     // grab user input
-    var searchTerm = searchTermEl.value.trim();
+    var searchTerm = searchTermEl.val().trim();
     // push to array
     cityHistory.push(searchTerm);
-    console.log(cityHistory);
+    // console.log(cityHistory);
     // save local storage
     saveCityHistory();
 
@@ -49,18 +50,18 @@ var formSubmitHandler = function(event) {
 var getWeather = function(searchTerm) {
     // format api url
     var apiURL = apiQueryWeather + searchTerm + weatherUnit + apiKey;
-    console.log(apiURL);
+    // console.log(apiURL);
 
     // make a get request to url
     fetch(apiURL)
         .then(function(response){
             // request was successful
             if (response.ok) {
-                console.log(response);
+                // console.log(response);
                 response.json().then(function(data) {
                 console.log(data);
-                var UVIndex = getUVIndex(data);
-                displayWeather(data, UVIndex, searchTerm);
+                getUVIndex(data);
+                displayWeather(data, searchTerm);
                 });
             // error handling
             } 
@@ -74,16 +75,20 @@ var getWeather = function(searchTerm) {
 }
 
 var displayWeather = function (weatherData, city) {
-    var weatherIcon = weatherData.weather.icon;
+    var weatherIconID = weatherData.weather[0].icon;
     var weatherTemp = weatherData.main.temp;
     var weatherHumidity = weatherData.main.humidity;
     var weatherWind = weatherData.wind.speed;
   
+
     var headerString = city + "  (" + currentDay + ")";
-    cityH1El.textContent = headerString;
-    tempPEl.textContent = weatherTemp;
-    humidPEl.textContent = weatherHumidity;
-    windSpeedPEl.textContent = weatherWind;
+    var weatherIcon = getIcon(weatherIconID);
+
+    cityH1El.text(headerString);
+    iconImgEl.attr("src", weatherIcon);
+    tempPEl.text(weatherTemp);
+    humidPEl.text(weatherHumidity);
+    windSpeedPEl.text(weatherWind);
 
 }
 
@@ -97,9 +102,8 @@ var getUVIndex = function(weatherData) {
     .then(function(response){
         // request was successful
         if (response.ok) {
-            console.log(response);
+            // console.log(response);
             response.json().then(function(data) {
-            console.log(data.value);
             uvIndexPEl.textContent = data.value;
             });
         // error handling
@@ -111,9 +115,16 @@ var getUVIndex = function(weatherData) {
     .catch(function(error) {
     alert("Unable to connect to Open Weather");
     });
-    
+}
+
+var getIcon = function(iconID) {
+    var urlPrefix = " http://openweathermap.org/img/wn/";
+    var urlSuffix = "@2x.png";
+    var url = urlPrefix + iconID + urlSuffix;
+    return url;
 }
 
 
 loadCityHistory();
-userFormEl.addEventListener("submit", formSubmitHandler);
+
+userFormEl.on("submit", formSubmitHandler);
