@@ -8,13 +8,6 @@ var humidPEl = $("#humid");
 var windSpeedPEl = $("#wind-speed");
 var uvIndexPEl = $("#uv");
 
-// var day1DivEl = $("#day1");
-// var day2DivEl = $("#day2");
-// var day3DivEl = $("#day3");
-// var day4DivEl = $("#day4");
-// var day5DivEl = $("#day5");
-
-
 var currentDay = moment().format("L");
 
 
@@ -32,6 +25,14 @@ var loadCityHistory = function() {
         console.log("I'm empty");
         // this may be redundent
         cityHistory = [];
+    }
+
+    // display 
+    for(var i = 1; i <= cityHistory.length; i++){
+        var cityString = "<p class='border'>" + cityHistory[cityHistory.length-i] + "<p>";
+        console.log(cityString);
+        $(".history").append(cityString);
+
     }
 }
 
