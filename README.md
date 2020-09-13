@@ -22,7 +22,7 @@ Features:
 Usage (Screenshots):
 Main Page
 
-![Main Page](./assets/images/work-day-scheduler.png)
+![Main Page](./assets/images/weather-dashboard.png)
 
 
 Credits Changes/Commits by: ginomaglaqueucla - (https://github.com/ginomaglaqueucla/weather-dashboard-gm20.git)
