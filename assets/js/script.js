@@ -1,6 +1,8 @@
+// User Input
 var userFormEl = $("#user-form");
 var searchTermEl = $("#search-term");
 
+// City Weather
 var cityH1El = $("#city");
 var iconImgEl = $("#weather-icon")
 var tempPEl = $("#temp");
@@ -8,17 +10,20 @@ var humidPEl = $("#humid");
 var windSpeedPEl = $("#wind-speed");
 var uvIndexPEl = $("#uv");
 
+// Current Date
 var currentDay = moment().format("L");
-
 
 // array of previous cities entered
 var cityHistory = [];
+
+// API query strings
 var apiKey = "&appid=dda7c53451e44b1f7532fa3d4d41f760";
 var apiQueryWeather = "https://api.openweathermap.org/data/2.5/weather?q=";
 var apiQueryUV = "https://api.openweathermap.org/data/2.5/uvi?";
 var apiQueryForecast = "https://api.openweathermap.org/data/2.5/forecast?q="
 var weatherUnit = "&units=imperial"
 
+// Load/display seach history
 var loadCityHistory = function() {
     cityHistory = JSON.parse(localStorage.getItem("cityHistory"));
     if(!cityHistory){
@@ -32,11 +37,11 @@ var loadCityHistory = function() {
     // display 
     for(var i = 1; i <= cityHistory.length; i++){
         var cityString = "<p class='border hist-city'><button class='row btn btn-light'>" + cityHistory[cityHistory.length-i] + "</button></p>";
-        console.log(cityString);
         $(".history").append(cityString);
     }
 }
 
+// save searched city onto local storage
 var saveCityHistory = function() {
     localStorage.setItem("cityHistory", JSON.stringify(cityHistory));
 }
@@ -44,7 +49,7 @@ var saveCityHistory = function() {
 // handles when submission
 var formSubmitHandler = function(event) {
     event.preventDefault();
-    console.log("hello");
+
     // remove previous forecast
     for (var i = 0; i < 5; i++) {
         var indexID = i + 1;
@@ -54,16 +59,18 @@ var formSubmitHandler = function(event) {
 
     // grab user input
     var searchTerm = searchTermEl.val().trim();
+    // reset field to blank
     searchTermEl.val("");
 
+    // fetch weather/forecast with user input
     getWeather(searchTerm);
     getForecast(searchTerm);
 }
 
+// fetches weather data using user input or previously inputted city
 var getWeather = function(searchTerm) {
-    // format api url
+    // format api url for Open Weather API
     var apiURL = apiQueryWeather + searchTerm + weatherUnit + apiKey;
-    // console.log(apiURL);
 
     // make a get request to url
     fetch(apiURL)
@@ -72,14 +79,15 @@ var getWeather = function(searchTerm) {
             if (response.ok) {
                 // console.log(response);
                 response.json().then(function(data) {
-                console.log(data);
                 // push to array
                 cityHistory.push(searchTerm);
-                // console.log(cityHistory);
                 // save local storage
                 saveCityHistory();
+                // update and display search history
                 loadCityHistory();
+                // request UV Index
                 getUVIndex(data);
+                // display weather with acquired fetched data
                 displayWeather(data, searchTerm);
                 });
             // error handling
@@ -94,11 +102,11 @@ var getWeather = function(searchTerm) {
     });
 }
 
+// fetches future weather data using user input or previously inputted city
 var getForecast = function(searchTerm) {
     console.log("being run");
-    // format api url
+    // format api url for Open Weather API
     var apiURL = apiQueryForecast + searchTerm + weatherUnit + apiKey;
-    // console.log(apiURL);
 
     // make a get request to url
     fetch(apiURL)
@@ -107,7 +115,7 @@ var getForecast = function(searchTerm) {
             if (response.ok) {
                 // console.log(response);
                 response.json().then(function(data) {
-                console.log(data);
+                // display forecast weather with aquired fetched data
                 displayForecast(data);
                 });
             // error handling
@@ -121,7 +129,7 @@ var getForecast = function(searchTerm) {
     });
 }
 
-
+// display weather with API weather data
 var displayWeather = function (weatherData, city) {
     var weatherIconID = weatherData.weather[0].icon;
     var weatherTemp = weatherData.main.temp;
@@ -141,10 +149,12 @@ var displayWeather = function (weatherData, city) {
 
 }
 
+// display forecast weather with API weather data
 var displayForecast = function (forecastData) {
     console.log(forecastData.list.length);
     $("five-day").empty();
     $("#five-day").append("5-Day Forecast: ");
+    // loop 5 times to display for 5 day forecast
     for(var i = 0; i < 5; i++) {
         console.log(i);
         var futureDay = moment().add(i+1, 'd').format("L");
@@ -175,19 +185,22 @@ var displayForecast = function (forecastData) {
         dayDivEl.addClass("bg-primary card");
     }
 
-
 }
 
+// display weather and forecast when user selects from search history
 var displayWeatherFromHist = function(event) {
     event.preventDefault();
+    // capture value of click
     var term = $(this)
     .text()
     .trim();
+    // empty previous forecast
     for (var i = 0; i < 5; i++) {
         var indexID = i + 1;
         dayDivEl = $("#day"+indexID);
         dayDivEl.empty();
     }
+    // request weather data with term
     getWeather(term);
     getForecast(term);
 
@@ -196,14 +209,9 @@ var displayWeatherFromHist = function(event) {
 
 // fetches UV index and returns
 var getUVIndex = function(weatherData) {
-    //http://api.openweathermap.org/data/2.5/uvi?appid={appid}&lat={lat}&lon={lon}
-    console.log(weatherData);
     var latString = "&lat="+ weatherData.coord.lat;
     var longString = "&lon="+ weatherData.coord.lon;
     var apiURL = apiQueryUV + apiKey + latString + longString;
-    console.log(latString);
-    console.log(longString);
-    console.log(apiURL);
 
     fetch(apiURL)
     .then(function(response){
@@ -211,6 +219,7 @@ var getUVIndex = function(weatherData) {
         if (response.ok) {
             // console.log(response);
             response.json().then(function(data) {
+                // check UV conditions
                 checkUVIndex(data);
             });
         // error handling
@@ -224,6 +233,7 @@ var getUVIndex = function(weatherData) {
     });
 }
 
+// changes UV Index color depending on condtions
 var checkUVIndex = function(weatherData){
     var uvColor;
     var uvIndex = weatherData.value;
@@ -238,6 +248,8 @@ var checkUVIndex = function(weatherData){
     $("#uv").empty();
     $("#uv").append("UV Index: <span class='"+uvColor+"'>"+uvIndex+"</span>");
 }
+
+// constructs image source for weather icon
 var getIcon = function(iconID) {
     var urlPrefix = " http://openweathermap.org/img/wn/";
     var urlSuffix = "@2x.png";
