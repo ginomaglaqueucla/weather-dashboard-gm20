@@ -176,8 +176,6 @@ var displayWeatherFromHist = function(event) {
     var term = $(this)
     .text()
     .trim();
-    console.log(term);
-
     getWeather(term);
     getForecast(term);
 
