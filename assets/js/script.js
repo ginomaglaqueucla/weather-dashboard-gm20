@@ -8,8 +8,15 @@ var humidPEl = $("#humid");
 var windSpeedPEl = $("#wind-speed");
 var uvIndexPEl = $("#uv");
 
+// var day1DivEl = $("#day1");
+// var day2DivEl = $("#day2");
+// var day3DivEl = $("#day3");
+// var day4DivEl = $("#day4");
+// var day5DivEl = $("#day5");
+
 
 var currentDay = moment().format("L");
+
 
 // array of previous cities entered
 var cityHistory = [];
@@ -77,6 +84,7 @@ var getWeather = function(searchTerm) {
 }
 
 var getForecast = function(searchTerm) {
+    console.log("being run");
     // format api url
     var apiURL = apiQueryForecast + searchTerm + weatherUnit + apiKey;
     // console.log(apiURL);
@@ -121,7 +129,37 @@ var displayWeather = function (weatherData, city) {
 
 }
 
-var displayWeather = function (forecastData) {
+var displayForecast = function (forecastData) {
+    console.log(forecastData.list.length);
+    for(var i = 0; i < 5; i++) {
+        console.log(i);
+        var futureDay = moment().add(i+1, 'd').format("L");
+        console.log(futureDay);
+        var weatherIconID = forecastData.list[i].weather[0].icon;
+        var weatherTemp = forecastData.list[i].main.temp;
+        var weatherHumidity = forecastData.list[i].main.humidity;
+        var weatherIcon = getIcon(weatherIconID);
+        
+        // var dayDivEl = document.createElement("div");
+        var indexID = i+1;
+        var dayDivEl = $("#day"+indexID);
+        var datePEl = document.createElement("p");
+        var fIconImgEl = document.createElement("img");
+        var fTempPEl = document.createElement("p");
+        var fHumidPEl = document.createElement("p");
+
+        datePEl.textContent = futureDay;
+        
+        fIconImgEl.setAttribute("src", weatherIcon);
+        fTempPEl.textContent = weatherTemp;
+        fHumidPEl.textContent = weatherHumidity;
+
+        dayDivEl.append(datePEl);
+        dayDivEl.append(fIconImgEl);
+        dayDivEl.append(fTempPEl);
+        dayDivEl.append(fHumidPEl);
+    }
+
 
 }
 
