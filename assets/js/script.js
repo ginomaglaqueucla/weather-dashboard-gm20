@@ -27,12 +27,13 @@ var loadCityHistory = function() {
         cityHistory = [];
     }
 
+    // remove previous children
+    $(".history").empty();
     // display 
     for(var i = 1; i <= cityHistory.length; i++){
         var cityString = "<p class='border'>" + cityHistory[cityHistory.length-i] + "<p>";
         console.log(cityString);
         $(".history").append(cityString);
-
     }
 }
 
@@ -58,6 +59,7 @@ var formSubmitHandler = function(event) {
     // console.log(cityHistory);
     // save local storage
     saveCityHistory();
+    loadCityHistory();
 
     getWeather(searchTerm);
     getForecast(searchTerm);
@@ -197,7 +199,7 @@ var getUVIndex = function(weatherData) {
 
 var getIcon = function(iconID) {
     var urlPrefix = " http://openweathermap.org/img/wn/";
-    var urlSuffix = ".png";
+    var urlSuffix = "@2x.png";
     var url = urlPrefix + iconID + urlSuffix;
     return url;
 }
