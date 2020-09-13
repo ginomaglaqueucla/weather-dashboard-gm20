@@ -16,6 +16,7 @@ var cityHistory = [];
 var apiKey = "&appid=dda7c53451e44b1f7532fa3d4d41f760";
 var apiQueryWeather = "https://api.openweathermap.org/data/2.5/weather?q=";
 var apiQueryUV = "https://api.openweathermap.org/data/2.5/uvi?";
+var apiQueryForecast = "https://api.openweathermap.org/data/2.5/forecast?q="
 var weatherUnit = "&units=imperial"
 
 var loadCityHistory = function() {
@@ -45,6 +46,7 @@ var formSubmitHandler = function(event) {
     saveCityHistory();
 
     getWeather(searchTerm);
+    getForecast(searchTerm);
 }
 
 var getWeather = function(searchTerm) {
@@ -74,6 +76,33 @@ var getWeather = function(searchTerm) {
     });
 }
 
+var getForecast = function(searchTerm) {
+    // format api url
+    var apiURL = apiQueryForecast + searchTerm + weatherUnit + apiKey;
+    // console.log(apiURL);
+
+    // make a get request to url
+    fetch(apiURL)
+        .then(function(response){
+            // request was successful
+            if (response.ok) {
+                // console.log(response);
+                response.json().then(function(data) {
+                console.log(data);
+                displayForecast(data);
+                });
+            // error handling
+            } 
+            else {
+                alert("Error: " + response.statusText);
+            }
+    })
+        .catch(function(error) {
+        alert("Unable to connect to Open Weather");
+    });
+}
+
+
 var displayWeather = function (weatherData, city) {
     var weatherIconID = weatherData.weather[0].icon;
     var weatherTemp = weatherData.main.temp;
@@ -89,6 +118,10 @@ var displayWeather = function (weatherData, city) {
     tempPEl.text("Temperature: "+weatherTemp +"°F");
     humidPEl.text("Humidity: " +weatherHumidity +"%");
     windSpeedPEl.text("Wind Speed: "+ weatherWind +"MPH");
+
+}
+
+var displayWeather = function (forecastData) {
 
 }
 
@@ -116,6 +149,7 @@ var getUVIndex = function(weatherData) {
     alert("Unable to connect to Open Weather");
     });
 }
+
 
 var getIcon = function(iconID) {
     var urlPrefix = " http://openweathermap.org/img/wn/";
