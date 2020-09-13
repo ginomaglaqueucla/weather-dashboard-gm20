@@ -31,7 +31,7 @@ var loadCityHistory = function() {
     $(".history").empty();
     // display 
     for(var i = 1; i <= cityHistory.length; i++){
-        var cityString = "<p class='border'>" + cityHistory[cityHistory.length-i] + "<p>";
+        var cityString = "<button class='row'>" + cityHistory[cityHistory.length-i] + "</button>";
         console.log(cityString);
         $(".history").append(cityString);
     }
@@ -171,6 +171,19 @@ var displayForecast = function (forecastData) {
 
 }
 
+var displayWeatherFromHist = function(event) {
+    event.preventDefault();
+    var term = $(this)
+    .text()
+    .trim();
+    console.log(term);
+
+    getWeather(term);
+    getForecast(term);
+
+
+}
+
 // fetches UV index and returns
 var getUVIndex = function(weatherData) {
     //http://api.openweathermap.org/data/2.5/uvi?appid={appid}&lat={lat}&lon={lon}
@@ -196,7 +209,6 @@ var getUVIndex = function(weatherData) {
     });
 }
 
-
 var getIcon = function(iconID) {
     var urlPrefix = " http://openweathermap.org/img/wn/";
     var urlSuffix = "@2x.png";
@@ -206,5 +218,5 @@ var getIcon = function(iconID) {
 
 
 loadCityHistory();
-
 userFormEl.on("submit", formSubmitHandler);
+$(".history").on("click", "button", displayWeatherFromHist);
