@@ -185,8 +185,9 @@ var displayWeatherFromHist = function(event) {
 // fetches UV index and returns
 var getUVIndex = function(weatherData) {
     //http://api.openweathermap.org/data/2.5/uvi?appid={appid}&lat={lat}&lon={lon}
-    var latString = "&lat="+ weatherData.coord.lon;
-    var longString = "&lon="+ weatherData.coord.lat;
+    console.log(weatherData);
+    var latString = "&lat="+ weatherData.coord.lat;
+    var longString = "&lon="+ weatherData.coord.lon;
     var apiURL = apiQueryUV + apiKey + latString + longString;
     console.log(latString);
     console.log(longString);
