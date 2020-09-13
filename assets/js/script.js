@@ -31,7 +31,7 @@ var loadCityHistory = function() {
     $(".history").empty();
     // display 
     for(var i = 1; i <= cityHistory.length; i++){
-        var cityString = "<button class='row'>" + cityHistory[cityHistory.length-i] + "</button>";
+        var cityString = "<p class='border hist-city'><button class='row btn btn-light'>" + cityHistory[cityHistory.length-i] + "</button></p>";
         console.log(cityString);
         $(".history").append(cityString);
     }
@@ -54,6 +54,7 @@ var formSubmitHandler = function(event) {
 
     // grab user input
     var searchTerm = searchTermEl.val().trim();
+    searchTermEl.val("");
     // push to array
     cityHistory.push(searchTerm);
     // console.log(cityHistory);
@@ -125,6 +126,7 @@ var displayWeather = function (weatherData, city) {
     var weatherTemp = weatherData.main.temp;
     var weatherHumidity = weatherData.main.humidity;
     var weatherWind = weatherData.wind.speed;
+    $("#weather-div").addClass("border")
   
 
     var headerString = city + "  (" + currentDay + ")";
@@ -140,6 +142,7 @@ var displayWeather = function (weatherData, city) {
 
 var displayForecast = function (forecastData) {
     console.log(forecastData.list.length);
+    $("#five-day").append("5-Day Forecast: ");
     for(var i = 0; i < 5; i++) {
         console.log(i);
         var futureDay = moment().add(i+1, 'd').format("L");
@@ -149,6 +152,7 @@ var displayForecast = function (forecastData) {
         var weatherHumidity = forecastData.list[i].main.humidity;
         var weatherIcon = getIcon(weatherIconID);
         
+
         var indexID = i+1;
         var dayDivEl = $("#day"+indexID);
         var datePEl = document.createElement("p");
@@ -159,13 +163,14 @@ var displayForecast = function (forecastData) {
         datePEl.textContent = futureDay;
         
         fIconImgEl.setAttribute("src", weatherIcon);
-        fTempPEl.textContent = weatherTemp;
-        fHumidPEl.textContent = weatherHumidity;
+        fTempPEl.textContent = "Temp: " + weatherTemp + "°F";
+        fHumidPEl.textContent = "Humidity: " + weatherHumidity +"%";
 
         dayDivEl.append(datePEl);
         dayDivEl.append(fIconImgEl);
         dayDivEl.append(fTempPEl);
         dayDivEl.append(fHumidPEl);
+        dayDivEl.addClass("bg-primary card");
     }
 
 
@@ -176,6 +181,11 @@ var displayWeatherFromHist = function(event) {
     var term = $(this)
     .text()
     .trim();
+    for (var i = 0; i < 5; i++) {
+        var indexID = i + 1;
+        dayDivEl = $("#day"+indexID);
+        dayDivEl.empty();
+    }
     getWeather(term);
     getForecast(term);
 

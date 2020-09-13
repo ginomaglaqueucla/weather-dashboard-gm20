@@ -5,3 +5,16 @@
 .jumbotron {
     padding: 34px 24px;
 }
+
+.container {
+    padding-bottom: 15px;
+}
+
+.hist-city {
+    margin:0px;
+    padding: 5px 0px 5px 0px;
+}
+
+.card {
+    padding-left: 5px;
+}
