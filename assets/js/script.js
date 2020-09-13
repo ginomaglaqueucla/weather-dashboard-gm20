@@ -23,6 +23,8 @@ var apiQueryUV = "https://api.openweathermap.org/data/2.5/uvi?";
 var apiQueryForecast = "https://api.openweathermap.org/data/2.5/forecast?q="
 var weatherUnit = "&units=imperial"
 
+var searchTermFlag = true;
+
 // Load/display seach history
 var loadCityHistory = function() {
     cityHistory = JSON.parse(localStorage.getItem("cityHistory"));
@@ -49,7 +51,7 @@ var saveCityHistory = function() {
 // handles when submission
 var formSubmitHandler = function(event) {
     event.preventDefault();
-
+    searchTermFlag = true;
     // remove previous forecast
     for (var i = 0; i < 5; i++) {
         var indexID = i + 1;
@@ -63,12 +65,12 @@ var formSubmitHandler = function(event) {
     searchTermEl.val("");
 
     // fetch weather/forecast with user input
-    getWeather(searchTerm);
+    getWeather(searchTerm, searchTermFlag);
     getForecast(searchTerm);
 }
 
 // fetches weather data using user input or previously inputted city
-var getWeather = function(searchTerm) {
+var getWeather = function(searchTerm, searchTermFlag) {
     // format api url for Open Weather API
     var apiURL = apiQueryWeather + searchTerm + weatherUnit + apiKey;
 
@@ -79,12 +81,15 @@ var getWeather = function(searchTerm) {
             if (response.ok) {
                 // console.log(response);
                 response.json().then(function(data) {
-                // push to array
-                cityHistory.push(searchTerm);
-                // save local storage
-                saveCityHistory();
-                // update and display search history
-                loadCityHistory();
+
+                if(searchTermFlag) {
+                    // push to array
+                    cityHistory.push(searchTerm);
+                    // save local storage
+                    saveCityHistory();
+                    // update and display search history
+                    loadCityHistory();
+                }
                 // request UV Index
                 getUVIndex(data);
                 // display weather with acquired fetched data
@@ -104,7 +109,6 @@ var getWeather = function(searchTerm) {
 
 // fetches future weather data using user input or previously inputted city
 var getForecast = function(searchTerm) {
-    console.log("being run");
     // format api url for Open Weather API
     var apiURL = apiQueryForecast + searchTerm + weatherUnit + apiKey;
 
@@ -151,8 +155,7 @@ var displayWeather = function (weatherData, city) {
 
 // display forecast weather with API weather data
 var displayForecast = function (forecastData) {
-    console.log(forecastData.list.length);
-    $("five-day").empty();
+    $("#five-day").empty();
     $("#five-day").append("5-Day Forecast: ");
     // loop 5 times to display for 5 day forecast
     for(var i = 0; i < 5; i++) {
@@ -190,6 +193,7 @@ var displayForecast = function (forecastData) {
 // display weather and forecast when user selects from search history
 var displayWeatherFromHist = function(event) {
     event.preventDefault();
+    searchTermFlag = false;
     // capture value of click
     var term = $(this)
     .text()
