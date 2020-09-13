@@ -1,3 +1,7 @@
 .row {
     margin: 0px 0px 0px 0px;
 }
+
+.jumbotron {
+    padding: 34px 24px;
+}

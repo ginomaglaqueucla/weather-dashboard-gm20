@@ -188,6 +188,10 @@ var getUVIndex = function(weatherData) {
     var latString = "&lat="+ weatherData.coord.lon;
     var longString = "&lon="+ weatherData.coord.lat;
     var apiURL = apiQueryUV + apiKey + latString + longString;
+    console.log(latString);
+    console.log(longString);
+    console.log(apiURL);
+
     fetch(apiURL)
     .then(function(response){
         // request was successful
