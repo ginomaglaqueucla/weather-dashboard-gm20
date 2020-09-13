@@ -55,12 +55,6 @@ var formSubmitHandler = function(event) {
     // grab user input
     var searchTerm = searchTermEl.val().trim();
     searchTermEl.val("");
-    // push to array
-    cityHistory.push(searchTerm);
-    // console.log(cityHistory);
-    // save local storage
-    saveCityHistory();
-    loadCityHistory();
 
     getWeather(searchTerm);
     getForecast(searchTerm);
@@ -79,12 +73,19 @@ var getWeather = function(searchTerm) {
                 // console.log(response);
                 response.json().then(function(data) {
                 console.log(data);
+                // push to array
+                cityHistory.push(searchTerm);
+                // console.log(cityHistory);
+                // save local storage
+                saveCityHistory();
+                loadCityHistory();
                 getUVIndex(data);
                 displayWeather(data, searchTerm);
                 });
             // error handling
             } 
             else {
+                location.reload();
                 alert("Error: " + response.statusText);
             }
     })
@@ -142,6 +143,7 @@ var displayWeather = function (weatherData, city) {
 
 var displayForecast = function (forecastData) {
     console.log(forecastData.list.length);
+    $("five-day").empty();
     $("#five-day").append("5-Day Forecast: ");
     for(var i = 0; i < 5; i++) {
         console.log(i);
@@ -209,7 +211,7 @@ var getUVIndex = function(weatherData) {
         if (response.ok) {
             // console.log(response);
             response.json().then(function(data) {
-            uvIndexPEl.text("UV Index: " + data.value);
+                checkUVIndex(data);
             });
         // error handling
         } 
@@ -222,6 +224,20 @@ var getUVIndex = function(weatherData) {
     });
 }
 
+var checkUVIndex = function(weatherData){
+    var uvColor;
+    var uvIndex = weatherData.value;
+    if(parseInt(uvIndex) <= 2) {
+        uvColor = "bg-success";
+    }
+    else if (parseInt(uvIndex) <= 5) {
+        uvColor = "bg-warning";
+    } else {
+        uvColor = "bg-danger";
+    }
+    $("#uv").empty();
+    $("#uv").append("UV Index: <span class='"+uvColor+"'>"+uvIndex+"</span>");
+}
 var getIcon = function(iconID) {
     var urlPrefix = " http://openweathermap.org/img/wn/";
     var urlSuffix = "@2x.png";
