@@ -43,6 +43,12 @@ var saveCityHistory = function() {
 var formSubmitHandler = function(event) {
     event.preventDefault();
     console.log("hello");
+    // remove previous forecast
+    for (var i = 0; i < 5; i++) {
+        var indexID = i + 1;
+        dayDivEl = $("#day"+indexID);
+        dayDivEl.empty();
+    }
 
     // grab user input
     var searchTerm = searchTermEl.val().trim();
@@ -140,7 +146,6 @@ var displayForecast = function (forecastData) {
         var weatherHumidity = forecastData.list[i].main.humidity;
         var weatherIcon = getIcon(weatherIconID);
         
-        // var dayDivEl = document.createElement("div");
         var indexID = i+1;
         var dayDivEl = $("#day"+indexID);
         var datePEl = document.createElement("p");
